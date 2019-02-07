@@ -8,6 +8,8 @@ namespace bankGoMyCode
     {
         static void Main(string[] args)
         {
+            Client<IAccount<int>, int> client = new Client<IAccount<int>, int>(1450,"sfsf");
+            Console.WriteLine(client.Cin);
             
             Console.WriteLine("Hello World!");
             Console.ReadLine();

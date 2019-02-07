@@ -4,7 +4,9 @@ using System.Text;
 
 namespace bankGoMyCode.Account
 {
-    interface IAccount
+    public interface IAccount<TAccountKey>
     {
+        TAccountKey AccountNumber { get; set; }
+        State State { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace bankGoMyCode.Client
 {
-    public abstract class AbstractClient<TAccountEntity> : IClient<TAccountEntity>
+    public abstract class AbstractClient<TAccountEntity , TAccountkey> : IClient<TAccountEntity , TAccountkey>
     {
         public int Cin { get; set; }
         public string Name { get; set; }
@@ -19,7 +19,7 @@ namespace bankGoMyCode.Client
 
         public abstract void CloseAccount(TAccountEntity account);
         public abstract void CreateAccount(TAccountEntity account);
-        public abstract TAccountEntity GetAccount(TAccountEntity accountNumber);
+        public abstract TAccountEntity GetAccount(TAccountkey accountNumber);
         public abstract IEnumerable<TAccountEntity> GetAllAccounts();
     }
 }

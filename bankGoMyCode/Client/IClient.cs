@@ -4,10 +4,10 @@ using System.Text;
 
 namespace bankGoMyCode.Client
 {
-    public interface IClient<TAccountEntity>
+    public interface IClient<TAccountEntity , TAccountkey>
     {
         IEnumerable<TAccountEntity> GetAllAccounts();
-        TAccountEntity GetAccount(TAccountEntity accountNumber);
+        TAccountEntity GetAccount(TAccountkey accountNumber);
         void CreateAccount(TAccountEntity account);
         void CloseAccount(TAccountEntity account);
     }

@@ -6,11 +6,10 @@ using bankGoMyCode.Transaction;
 
 namespace bankGoMyCode.Client
 {
-    public class Client<TAccountEntity , TAccountKey> : AbstractClient<TAccountEntity> 
-        where TAccountEntity : IAccount<TAccountKey> 
+    public class Client<TTransactionKey, TAccountkey, TAccountEntity, TTransaction> : AbstractClient<TAccountEntity , TAccountkey> 
+        where TAccountEntity : IAccount<TAccountkey, TTransaction,TTransactionKey>
     {
-
-
+        
         public Client(int c , string n ) : base(c , n) { }
         
         public override void CloseAccount(TAccountEntity account)
@@ -25,7 +24,7 @@ namespace bankGoMyCode.Client
             Accounts.Add(account);
         }
 
-        public override TAccountEntity GetAccount(TAccountEntity accountNumber)
+        public override TAccountEntity GetAccount(TAccountkey accountNumber)
         {
             TAccountEntity account = (
                 from a in Accounts
@@ -40,5 +39,6 @@ namespace bankGoMyCode.Client
         {
             return Accounts;
         }
+
     }
 }

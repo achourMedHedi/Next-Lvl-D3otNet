@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using bankGoMyCode.Transaction;
+
+
+
 namespace bankGoMyCode.Account
 {
-    public abstract class AbstractAccount<TClientKey  , TTransaction , TAccountKey , TTransactionKey> : IAccount<TAccountKey, TTransaction , TTransactionKey>
-        where TTransaction : Transaction<TTransactionKey , TAccountKey> , new()
+    public abstract class AbstractAccount<TClientKey  , TTransaction , TAccountKey , TTransactionKey> : IAccount<TAccountKey, TTransaction , TTransactionKey> 
+        where TTransaction : Transaction<TTransactionKey , TAccountKey>  , new()
     {
         public double Balance { get; set; }
         public TClientKey Owner { get; set; }
-        public List<TTransaction> transactions { get; set; }
         public DateTime Date { get; set; }
         public TAccountKey AccountNumber { get ; set ; }
         public State State { get ; set ; }
         public double TaxRatio { get; set; }
+        private List<TTransaction> transactions { get; set; }
 
         public AbstractAccount(TClientKey owner , TAccountKey accountNumber)
         {
@@ -26,30 +30,42 @@ namespace bankGoMyCode.Account
         }
 
 
-
         public IEnumerable<TTransaction> GetAllTransactions()
         {
             return transactions;
         }
 
-        public void DebitAccount(double amount, TTransaction transaction)
+        
+        public virtual void Debit(double amount, TTransactionKey transactionNumber, TAccountKey targetKey)
         {
-            // code to send transaction 
-            // new transation ....
-            Balance = amount; 
-            SendMoney(transaction);
-
+            Transaction<TTransactionKey, TAccountKey> transaction = new Transaction<TTransactionKey, TAccountKey>(Direction.Outgoing, Transaction.State.Ready, transactionNumber, AccountNumber, targetKey, amount);
+            LoggingTransation((TTransaction)transaction);
+            if (Balance > amount)
+            {
+                transaction.State = Transaction.State.Accepted;
+                Balance -= amount;
+                SendMoney((TTransaction)transaction);
+            }
+            else
+            {
+                transaction.State = Transaction.State.Rejected;
+                LoggingTransation((TTransaction)transaction);
+                throw new Exception("amount too high");
+            }
         }
-        public virtual void Debit(double amount, TTransactionKey transactionNumber, TAccountKey targetKey) { }
 
         public virtual void Credit(double amount ,TAccountKey sourceTransactionKey , TTransactionKey transactionNumber)
         {
-            // credit account 
-            // and create new transaction
-            Balance += amount;
-            Transaction<TTransactionKey, TAccountKey> transaction = new Transaction<TTransactionKey, TAccountKey>(Direction.Incoming, Transaction.State.Accepted, transactionNumber, sourceTransactionKey, AccountNumber, amount);
-            SendMoney((TTransaction)transaction);
-
+            if (State == State.Closed)
+            {
+                throw new Exception("account closed");
+            }
+            else
+            {
+                Balance += amount;
+                Transaction<TTransactionKey, TAccountKey> transaction = new Transaction<TTransactionKey, TAccountKey>(Direction.Incoming, Transaction.State.Accepted, transactionNumber, sourceTransactionKey, AccountNumber, amount);
+                SendMoney((TTransaction)transaction);
+            }
         }
 
         public void SendMoney(TTransaction transaction)
@@ -61,8 +77,16 @@ namespace bankGoMyCode.Account
         public void LoggingTransation (TTransaction transaction)
         {
             // logging transaction
-            Console.WriteLine("logging transaction ... ");
+            
+            Console.WriteLine("logging transaction "+transaction.TransactionNumber);
+
         }
 
+        public IEnumerable<TTransaction> GetTransactionsByDate(DateTime date)
+        {
+            return from t in transactions where t.Date.Equals(date) select t; 
+        }
+
+        
     }
 }

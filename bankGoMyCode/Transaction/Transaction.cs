@@ -5,7 +5,7 @@ using System.Text;
 
 namespace bankGoMyCode.Transaction
 {
-    public class Transaction<TTransactionKey , TAccountkey>
+    public class Transaction<TTransactionKey , TAccountkey> : IEquatable<TAccountkey>
     {
         public TTransactionKey TransactionNumber { get; set; }
         public TAccountkey SourceAccountNUmber { get; set; }
@@ -25,6 +25,11 @@ namespace bankGoMyCode.Transaction
             Date = new DateTime();
             State = state;
             Direction = direction;
+        }
+
+        public bool Equals(TAccountkey other)
+        {
+            return TargetAccountNumber.Equals(other); 
         }
     }
 }

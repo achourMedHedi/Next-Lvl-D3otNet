@@ -15,36 +15,11 @@ namespace bankGoMyCode.Account
         }
         public override void Debit(double amount, TTransactionKey transactionNumber, TAccountKey targetKey)
         {
-            double calculateResult = (Balance - (Balance * (TaxRatio * amount))) - amount;
-            Transaction<TTransactionKey, TAccountKey> transaction = new Transaction<TTransactionKey, TAccountKey>(Direction.Outgoing, Transaction.State.Ready, transactionNumber, AccountNumber, targetKey, amount);
-            // try to log this action  
-            LoggingTransation((TTransaction)transaction);
-            // if (true) then accepte transaction and sendMoney
-            if (Balance >= calculateResult)
-            {
-                transaction.State = Transaction.State.Accepted;
-                DebitAccount(calculateResult, (TTransaction) transaction);
-            }
-            // else catch exception
-            else
-            {
-                transaction.State = Transaction.State.Rejected;
-                //DebitAccount(calculateResult, (TTransaction)transaction);
-                LoggingTransation((TTransaction)transaction);
-                throw new Exception("amount too high"); 
-            }
-        }
-
-        public override void Credit(double amount , TAccountKey sourceTransactionKey , TTransactionKey transactionNumber)
-        {
-            if (State == State.Closed)
-            {
-                throw new Exception("account closed"); 
-            }
-            else
-            {
-                base.Credit(amount , sourceTransactionKey , transactionNumber);
-            }
+            double calculateResult = (TaxRatio * Balance) + amount;
+            
+            base.Debit(calculateResult,  transactionNumber,  targetKey); 
+            
+            //double calculateResult = ((Balance * (TaxRatio * amount))) + amount;
         }
     }
 }

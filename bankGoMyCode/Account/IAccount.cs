@@ -10,7 +10,10 @@ namespace bankGoMyCode.Account
         TAccountKey AccountNumber { get; set; }
         State State { get; set; }
         IEnumerable<TTransaction> GetAllTransactions();
-        void DebitAccount(double amount, TTransaction transaction);
+        IEnumerable<TTransaction> GetTransactionsByDate(DateTime date);
+        IEnumerable<TTransaction> GetTransactionsByTarget(TAccountKey targetAccountNumber);
+
+        void Debit(double amount, TTransactionKey transactionNumber, TAccountKey targetKey);
         void Credit(double amount, TAccountKey sourceTransactionKey, TTransactionKey transactionNumber);
         void SendMoney(TTransaction transaction);
 

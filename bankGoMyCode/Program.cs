@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using bankGoMyCode.Account;
 using bankGoMyCode.Client;
 using bankGoMyCode.Transaction;
+using System.IO;
+using System.Reflection;
+using log4net;
+using log4net.Config;
+using System.Xml;
+using Serilog;
 
 namespace bankGoMyCode
 {
@@ -10,9 +16,10 @@ namespace bankGoMyCode
     {
         static void Main(string[] args)
         {
+            //guid
             Client<int,int,IAccount<int , Transaction<int , int> , int> , Transaction<int , int> > client = new Client<int, int, IAccount<int, Transaction<int, int>, int>, Transaction<int, int>>(1450, "sfsf");
             //Console.WriteLine(client.Name);
-            Saving<int , Transaction<int, int> ,int , int > account = new Saving<int, Transaction<int, int>, int, int>(client.Cin , 123456);
+            Business<int , Transaction<int, int> ,int , int > account = new Business<int, Transaction<int, int>, int, int>(client.Cin , 123456);
             client.CreateAccount(account);
             //client.CloseAccount(account);
             foreach (var a in client.GetAllAccounts())

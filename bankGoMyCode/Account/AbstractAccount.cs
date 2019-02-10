@@ -14,7 +14,7 @@ namespace bankGoMyCode.Account
     [KnownType(typeof(Business<int , Transaction<int , int> , int , int >))]
     [KnownType(typeof(Saving<int, Transaction<int , int> , int , int >))]
 
-    public abstract class AbstractAccount<TClientKey  , TTransaction , TAccountKey , TTransactionKey> : IAccount<TAccountKey, TTransaction , TTransactionKey> 
+    public abstract class AbstractAccount<TClientKey  , TTransaction , TAccountKey , TTransactionKey> : IAccount<TAccountKey, TTransaction , TTransactionKey> , IEquatable<AbstractAccount<TClientKey, TTransaction, TAccountKey, TTransactionKey>>
         where TTransaction : Transaction<TTransactionKey , TAccountKey>  , new()
     {
         [DataMember]
@@ -47,7 +47,23 @@ namespace bankGoMyCode.Account
             return transactions;
         }
 
-        
+         public static bool operator ==(AbstractAccount<TClientKey, TTransaction, TAccountKey, TTransactionKey> a, AbstractAccount<TClientKey, TTransaction, TAccountKey, TTransactionKey> b)
+        {
+            return a.Equals(b);
+            //AccountNumber.Equals(b.AccountNumber)
+        }
+        public static bool operator !=(AbstractAccount<TClientKey, TTransaction, TAccountKey, TTransactionKey> a, AbstractAccount<TClientKey, TTransaction, TAccountKey, TTransactionKey> b)
+        {
+            return !a.Equals(b);
+
+            //return !a.AccountNumber.Equals(b.AccountNumber);
+        }
+            
+        public bool Equals(AbstractAccount<TClientKey, TTransaction, TAccountKey, TTransactionKey> other)
+        {
+            return AccountNumber.Equals(other.AccountNumber);
+        }
+            
         public virtual void Debit(double amount, TTransactionKey transactionNumber, TAccountKey targetKey)
         {
             Transaction<TTransactionKey, TAccountKey> transaction = new Transaction<TTransactionKey, TAccountKey>(Direction.Outgoing, Transaction.State.Ready, transactionNumber, AccountNumber, targetKey, amount);

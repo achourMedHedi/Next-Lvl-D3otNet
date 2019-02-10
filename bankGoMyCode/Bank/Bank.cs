@@ -103,9 +103,20 @@ namespace bankGoMyCode.Bank
                         Console.WriteLine("d5alt");
                         Thread.Sleep(3000);
                         Console.WriteLine("lde5el");
-                        sender.Debit(transaction.Amount,transaction.TransactionNumber,transaction.TargetAccountNumber);
-                        receiver.Credit(transaction.Amount , transaction.SourceAccountNUmber , transaction.TransactionNumber);
-                        
+                        if (sender == receiver && sender.State.Equals(Direction.Incoming))
+                        {
+                            receiver.Credit(transaction.Amount, transaction.SourceAccountNUmber, transaction.TransactionNumber);
+                        }
+                        else if (sender == receiver && sender.State.Equals(Direction.Outgoing))
+                        {
+                            receiver.Credit(-transaction.Amount, transaction.SourceAccountNUmber, transaction.TransactionNumber);
+                        }
+                        else if (sender != receiver)
+                        {
+                            sender.Debit(transaction.Amount, transaction.TransactionNumber, transaction.TargetAccountNumber);
+                            receiver.Credit(transaction.Amount, transaction.SourceAccountNUmber, transaction.TransactionNumber);
+                        }
+
                     }
                     catch (Exception e)
                     {

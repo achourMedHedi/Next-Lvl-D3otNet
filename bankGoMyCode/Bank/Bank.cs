@@ -17,6 +17,7 @@ namespace bankGoMyCode.Bank
     [DataContract]
     public class Bank<TBankKey, TClient , TTransaction, TTransactionKey, TAccountKey , TAccountEntity > : IBank<TBankKey, TClient, TTransaction, TTransactionKey, TAccountKey, TAccountEntity>
         where TClient : IClient<TAccountEntity, TAccountKey>
+        //where TAccountEntity : AbstractAccount<TAccountKey, TTransaction, TTransactionKey>
         where TAccountEntity : IAccount<TAccountKey, TTransaction, TTransactionKey>
         where TTransaction : Transaction<TTransactionKey, TAccountKey>
     {
@@ -103,6 +104,7 @@ namespace bankGoMyCode.Bank
                         Console.WriteLine("d5alt");
                         Thread.Sleep(3000);
                         Console.WriteLine("lde5el");
+                        // just to show you that i used operator overload in abstractAccount
                         if (sender == receiver && sender.State.Equals(Direction.Incoming))
                         {
                             receiver.Credit(transaction.Amount, transaction.SourceAccountNUmber, transaction.TransactionNumber);

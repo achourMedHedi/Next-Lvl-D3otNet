@@ -1,23 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using bankGoMyCode.Transaction;
+using Serilog;
 
 
 
 namespace bankGoMyCode.Account
 {
+    [DataContract]
+    [KnownType(typeof(Business<int , Transaction<int , int> , int , int >))]
+    [KnownType(typeof(Saving<int, Transaction<int , int> , int , int >))]
+
     public abstract class AbstractAccount<TClientKey  , TTransaction , TAccountKey , TTransactionKey> : IAccount<TAccountKey, TTransaction , TTransactionKey> 
         where TTransaction : Transaction<TTransactionKey , TAccountKey>  , new()
     {
+        [DataMember]
         public double Balance { get; set; }
+        [DataMember]
         public TClientKey Owner { get; set; }
         public DateTime Date { get; set; }
+        [DataMember]
         public TAccountKey AccountNumber { get ; set ; }
+        [DataMember]
         public State State { get ; set ; }
+        [DataMember]
         public double TaxRatio { get; set; }
-        private List<TTransaction> transactions { get; set; }
+        [DataMember]
+        public List<TTransaction> transactions { get; set; }
 
         public AbstractAccount(TClientKey owner , TAccountKey accountNumber)
         {
@@ -79,6 +91,10 @@ namespace bankGoMyCode.Account
             // logging transaction
             
             Console.WriteLine("logging transaction "+transaction.TransactionNumber);
+            var log = new LoggerConfiguration()
+           .WriteTo.File(@"C:\Users\achou\source\repos\bankGoMyCode\bankGoMyCode\bank.log")
+           .CreateLogger();
+            log.Information("Transaction : Executing transaction " + transaction.State + " "  +  transaction.TransactionNumber); ;
 
         }
 
@@ -87,6 +103,14 @@ namespace bankGoMyCode.Account
             return from t in transactions where t.Date.Equals(date) select t; 
         }
 
-        
+        public IEnumerable<TTransaction> GetTransactionsByTarget(TAccountKey targetAccountNumber)
+        {
+            return from t in transactions where t.Equals(targetAccountNumber) select t;
+        }
+
+        public IEnumerable<TTransaction> GetTransactionsByQuery(Func<TTransaction , bool> query)
+        {
+            return transactions.Where(query);
+        }
     }
 }

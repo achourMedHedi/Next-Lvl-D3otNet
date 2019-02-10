@@ -12,6 +12,7 @@ namespace bankGoMyCode.Account
         IEnumerable<TTransaction> GetAllTransactions();
         IEnumerable<TTransaction> GetTransactionsByDate(DateTime date);
         IEnumerable<TTransaction> GetTransactionsByTarget(TAccountKey targetAccountNumber);
+        IEnumerable<TTransaction> GetTransactionsByQuery(Func<TTransaction , bool> query);
 
         void Debit(double amount, TTransactionKey transactionNumber, TAccountKey targetKey);
         void Credit(double amount, TAccountKey sourceTransactionKey, TTransactionKey transactionNumber);

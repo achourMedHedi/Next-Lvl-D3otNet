@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using bankGoMyCode.Account;
 using bankGoMyCode.Client;
 using bankGoMyCode.Transaction;
+using bankGoMyCode.Bank;
 using System.IO;
 using System.Reflection;
 using log4net;
@@ -12,12 +13,17 @@ using Serilog;
 
 namespace bankGoMyCode
 {
+
     class Program
     {
+
         static void Main(string[] args)
         {
-            //guid
+            Bank<int, Client<int, int, IAccount<int, Transaction<int, int>, int>, Transaction<int, int>>, Transaction<int, int>, int, int, IAccount<int, Transaction<int, int>, int>> bank = new Bank<int, Client<int, int, IAccount<int, Transaction<int, int>, int>, Transaction<int, int>>, Transaction<int, int>, int, int, IAccount<int, Transaction<int, int>, int>>("bmc bank ", 100);
             Client<int,int,IAccount<int , Transaction<int , int> , int> , Transaction<int , int> > client = new Client<int, int, IAccount<int, Transaction<int, int>, int>, Transaction<int, int>>(1450, "sfsf");
+            bank.AddClient(client);
+            bank.AddTransaction(new Transaction<int, int>(Direction.Incoming, Transaction.State.Ready, 9, 9, 9, 900));
+            //guid
             //Console.WriteLine(client.Name);
             Business<int , Transaction<int, int> ,int , int > account = new Business<int, Transaction<int, int>, int, int>(client.Cin , 123456);
             client.CreateAccount(account);
@@ -40,6 +46,17 @@ namespace bankGoMyCode
                 Console.WriteLine(tran.SourceAccountNUmber + " " + tran.TargetAccountNumber + " " + tran.State + " " + tran.Direction);
             }
             
+            Console.WriteLine("-----------------------++++++++++++++++----------");
+            //var allll = bank.accounts;
+            foreach (var aaa in bank.Accounts.Value)
+            {
+                Console.WriteLine(aaa.AccountNumber);
+            }
+            bank.Save();
+
+            Console.WriteLine(bank.Name);
+            Console.WriteLine("-------------------");
+            bank.Auther();
             Console.WriteLine("Hello World!");
             Console.ReadLine();
         }

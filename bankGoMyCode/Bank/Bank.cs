@@ -82,7 +82,8 @@ namespace bankGoMyCode.Bank
             // add transaction to the queue 
             // if theres an agent 
             //transactionsQueue.Enqueue(transaction);
-
+            TransactionsQueue.Enqueue(transaction);
+            Console.WriteLine("queue");
             if (Agent > 0)
             {
                 Agent--;
@@ -92,10 +93,11 @@ namespace bankGoMyCode.Bank
                 // receiver account 
                 // sender.sendMoney
                 // receiver.credit 
+                TransactionsQueue.Dequeue();
+                Console.WriteLine("dequeue");
                 lock (TransactionsQueue)
                 {
-                    TransactionsQueue.Enqueue(transaction);
-                    Console.WriteLine("queue");
+                   
                     // with thread :/
                     TAccountEntity sender = Clients.Select(a => a.GetAccount(transaction.SourceAccountNUmber)).FirstOrDefault();
                     TAccountEntity receiver = Clients.Select(a => a.GetAccount(transaction.TargetAccountNumber)).FirstOrDefault() ;
@@ -124,8 +126,7 @@ namespace bankGoMyCode.Bank
                     {
                         Console.WriteLine(e.Message);
                     }
-                    TransactionsQueue.Dequeue();
-                    Console.WriteLine("dequeue");
+                    
                 }
 
             }

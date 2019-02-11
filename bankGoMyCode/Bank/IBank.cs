@@ -22,6 +22,6 @@ namespace bankGoMyCode.Bank
         Bank<TBankKey, TClient, TTransaction, TTransactionKey, TAccountKey, TAccountEntity> Load(string filePath);
 
         void Save(string filePath);
-        void AddTransaction(TTransaction transaction);
+        void AddTransaction(TTransactionKey number, TAccountKey source, TAccountKey target, double amount);
     }
 }

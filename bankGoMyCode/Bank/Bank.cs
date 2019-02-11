@@ -35,10 +35,13 @@ namespace bankGoMyCode.Bank
         public Queue<TTransaction> TransactionsQueue { get; set; }
         public Lazy<IEnumerable<TAccountEntity>> Accounts;
         public Lazy<IEnumerable<TTransaction>> Transactions;
+        public readonly object lockTransaction = new object();
+        Thread[] Agents;
 
         
         public Bank(string name , TBankKey swift )
         {
+            Agents = new Thread[Agent];
             Name = name;
             Swift = swift;
             Agent = 1;
@@ -77,7 +80,56 @@ namespace bankGoMyCode.Bank
             }
         }
 
-        public void AddTransaction(TTransaction transaction)
+        public void AddTransaction(TTransactionKey number, TAccountKey source, TAccountKey target,double amount)
+        {
+            Transaction<TTransactionKey, TAccountKey> transaction = new Transaction<TTransactionKey, TAccountKey>(Direction.Incoming, bankGoMyCode.Transaction.State.Ready, number, source, target , amount);
+            TransactionsQueue.Enqueue((TTransaction) transaction);
+            Console.WriteLine("enqueue /*/*/*/*/*/*/**/*");
+            TAccountEntity sender = Clients.Select(a => a.GetAccount(transaction.SourceAccountNUmber)).FirstOrDefault();
+            TAccountEntity receiver = Clients.Select(a => a.GetAccount(transaction.TargetAccountNumber)).FirstOrDefault();
+
+            for (int i = 0; i < Agent; i++)
+            {
+                Console.WriteLine("agent---------------------");
+                Thread t = new Thread(new ThreadStart(() =>
+                {
+                    Console.WriteLine("thread-----------------");
+                    lock (lockTransaction)
+                    {
+                        TransactionsQueue.Dequeue();
+                        Console.WriteLine("dequeue /*/*/*/*/*/**/*");
+
+                        Thread.Sleep(3000);
+                        Console.WriteLine("lock--------------");
+                        if (sender.Equals(receiver))
+                        {
+                            sender.Credit(transaction.Amount, transaction.SourceAccountNUmber, transaction.TransactionNumber);
+                        }
+                        else 
+                        {
+                            try
+                            {
+                                sender.Debit(transaction.Amount, transaction.TransactionNumber, transaction.TargetAccountNumber);
+                                receiver.Credit(transaction.Amount, transaction.SourceAccountNUmber, transaction.TransactionNumber);
+                            }
+                            catch (Exception e)
+                            {
+                                
+                                Console.WriteLine(e.Message);
+                                
+                            }
+                        }
+                        Console.WriteLine($"user receiver {receiver.Balance}");
+                        Console.WriteLine($"//user sender {sender.Balance}");
+                    }
+                }));
+                Console.WriteLine("start");
+                 t.Start();
+                Console.WriteLine("rawah");
+            }
+        }
+
+        /*public void AddTransaction(TTransaction transaction)
         {
             // add transaction to the queue 
             // if theres an agent 
@@ -136,7 +188,7 @@ namespace bankGoMyCode.Bank
             }
             Agent++;
             
-        }
+        }*/
 
         
 

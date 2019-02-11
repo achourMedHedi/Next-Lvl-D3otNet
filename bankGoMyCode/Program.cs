@@ -22,13 +22,16 @@ namespace bankGoMyCode
             Bank<int, Client<int, int, IAccount<int, Transaction<int, int>, int>, Transaction<int, int>>, Transaction<int, int>, int, int, IAccount<int, Transaction<int, int>, int>> bank = new Bank<int, Client<int, int, IAccount<int, Transaction<int, int>, int>, Transaction<int, int>>, Transaction<int, int>, int, int, IAccount<int, Transaction<int, int>, int>>("bmc bank ", 100);
             Client<int,int,IAccount<int , Transaction<int , int> , int> , Transaction<int , int> > client = new Client<int, int, IAccount<int, Transaction<int, int>, int>, Transaction<int, int>>(1450, "sfsf");
             bank.AddClient(client);
-            bank.AddTransaction(new Transaction<int, int>(Direction.Incoming, Transaction.State.Ready, 9, 9, 9, 900));
+            Business<int , Transaction<int, int> ,int , int > account = new Business<int, Transaction<int, int>, int, int>(client.Cin ,123456);
+            Business<int , Transaction<int, int> ,int , int > account2 = new Business<int, Transaction<int, int>, int, int>(client.Cin ,1234567);
+            client.CreateAccount(account);
+            client.CreateAccount(account2);
+            bank.AddTransaction(10, 123456, 123456, 100);
+            bank.AddTransaction(9, 123456, 1234567, 1000);
             //guid
             //Console.WriteLine(client.Name);
-            Business<int , Transaction<int, int> ,int , int > account = new Business<int, Transaction<int, int>, int, int>(client.Cin , 123456);
-            client.CreateAccount(account);
             //client.CloseAccount(account);
-            foreach (var a in client.GetAllAccounts())
+            /*foreach (var a in client.GetAllAccounts())
             {
                 Console.WriteLine(a.AccountNumber.ToString() + " " + a.State);
             }
@@ -56,7 +59,7 @@ namespace bankGoMyCode
 
             Console.WriteLine(bank.Name);
             Console.WriteLine("-------------------");
-            bank.Auther();
+            bank.Auther();*/
             Console.WriteLine("Hello World!");
             Console.ReadLine();
         }

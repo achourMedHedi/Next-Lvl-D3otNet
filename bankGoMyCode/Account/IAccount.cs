@@ -8,6 +8,7 @@ namespace bankGoMyCode.Account
     public interface IAccount<TAccountKey , TTransaction , TTransactionKey>
     {
         TAccountKey AccountNumber { get; set; }
+        double Balance { get; set; }
         State State { get; set; }
         IEnumerable<TTransaction> GetAllTransactions();
         IEnumerable<TTransaction> GetTransactionsByDate(DateTime date);

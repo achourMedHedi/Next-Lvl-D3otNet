@@ -67,7 +67,7 @@ namespace bankGoMyCode.Account
         public virtual void Debit(double amount, TTransactionKey transactionNumber, TAccountKey targetKey)
         {
             Transaction<TTransactionKey, TAccountKey> transaction = new Transaction<TTransactionKey, TAccountKey>(Direction.Outgoing, Transaction.State.Ready, transactionNumber, AccountNumber, targetKey, amount);
-            LoggingTransation((TTransaction)transaction);
+           // LoggingTransation((TTransaction)transaction);
             if (Balance > amount)
             {
                 transaction.State = Transaction.State.Accepted;
@@ -79,6 +79,7 @@ namespace bankGoMyCode.Account
                 transaction.State = Transaction.State.Rejected;
                 LoggingTransation((TTransaction)transaction);
                 throw new Exception("amount too high");
+
             }
         }
 
@@ -108,7 +109,7 @@ namespace bankGoMyCode.Account
             
             Console.WriteLine("logging transaction "+transaction.TransactionNumber);
             var log = new LoggerConfiguration()
-           .WriteTo.File(@"C:\Users\achou\source\repos\bankGoMyCode\bankGoMyCode\bank.log")
+           .WriteTo.File(@"C:\Users\achou\Desktop\bankGmc\Next-Lvl-D3otNet\bankGoMyCode\bank.log")
            .CreateLogger();
             log.Information("Transaction : Executing transaction " + transaction.State + " "  +  transaction.TransactionNumber); ;
 
